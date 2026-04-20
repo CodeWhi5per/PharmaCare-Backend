@@ -78,8 +78,20 @@ exports.updateSupplier = async (req, res, next) => {
 // @route DELETE /api/suppliers/:id
 exports.deleteSupplier = async (req, res, next) => {
   try {
-    const supplier = await Supplier.findByIdAndDelete(req.params.id);
+    const supplier = await Supplier.findById(req.params.id);
     if (!supplier) return res.status(404).json({ success: false, message: 'Supplier not found' });
+
+    const supplierName = supplier.name;
+    await Supplier.findByIdAndDelete(req.params.id);
+
+    await Activity.create({
+      action: 'Deleted',
+      entity: 'Supplier',
+      entityId: supplier._id.toString(),
+      entityName: supplierName,
+      performedBy: req.user._id,
+    });
+
     res.status(200).json({ success: true, message: 'Supplier deleted' });
   } catch (err) {
     next(err);
