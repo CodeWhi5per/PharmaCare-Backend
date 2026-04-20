@@ -33,7 +33,6 @@ medicineSchema.pre('save', function (next) {
   } else {
     this.status = 'healthy';
   }
-  next();
 });
 
 module.exports = mongoose.model('Medicine', medicineSchema);
