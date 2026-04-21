@@ -12,6 +12,7 @@ const alertsRoutes = require('./routes/alerts.routes');
 const suppliersRoutes = require('./routes/suppliers.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
 const settingsRoutes = require('./routes/settings.routes');
+const ordersRoutes = require('./routes/orders.routes');
 
 // Connect to MongoDB
 connectDB();
@@ -39,6 +40,7 @@ app.use('/api/alerts', alertsRoutes);
 app.use('/api/suppliers', suppliersRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/orders', ordersRoutes);
 
 // 404 handler
 app.use((req, res) => {
