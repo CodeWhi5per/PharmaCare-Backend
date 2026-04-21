@@ -40,14 +40,6 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Generate order number before validation
-orderSchema.pre('validate', async function(next) {
-  if (!this.orderNumber) {
-    const count = await mongoose.model('Order').countDocuments();
-    const datePart = `${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}`;
-    this.orderNumber = `PO-${datePart}${String(count + 1).padStart(5, '0')}`;
-  }
-});
 
 module.exports = mongoose.model('Order', orderSchema);
 

@@ -6,13 +6,20 @@ const {
   resolveAlert,
   dismissAlert,
 } = require('../controllers/alerts.controller');
-const { protect } = require('../middleware/auth.middleware');
+const { protect, authorize } = require('../middleware/auth.middleware');
 
+// All routes require authentication
 router.use(protect);
 
-router.route('/').get(getAlerts).post(createAlert);
-router.patch('/:id/resolve', resolveAlert);
-router.patch('/:id/dismiss', dismissAlert);
+// GET routes - all roles can view
+router.get('/', getAlerts);
+
+// POST routes - admin and manager only
+router.post('/', authorize('admin', 'manager'), createAlert);
+
+// PATCH routes - resolve (admin and manager), dismiss (all roles)
+router.patch('/:id/resolve', authorize('admin', 'manager'), resolveAlert);
+router.patch('/:id/dismiss', dismissAlert); // All authenticated users can dismiss
 
 module.exports = router;
 

@@ -10,15 +10,26 @@ const {
   getLowStockMedicines,
   bulkReorder,
 } = require('../controllers/inventory.controller');
-const { protect } = require('../middleware/auth.middleware');
+const { protect, authorize } = require('../middleware/auth.middleware');
 
+// All routes require authentication
 router.use(protect);
 
-router.route('/').get(getMedicines).post(createMedicine);
+// GET routes - all roles can view
+router.get('/', getMedicines);
 router.get('/low-stock', getLowStockMedicines);
-router.post('/bulk-reorder', bulkReorder);
-router.route('/:id').get(getMedicine).put(updateMedicine).delete(deleteMedicine);
-router.post('/:id/reorder', triggerReorder);
+router.get('/:id', getMedicine);
+
+// POST routes - admin and manager only
+router.post('/', authorize('admin', 'manager'), createMedicine);
+router.post('/bulk-reorder', authorize('admin', 'manager'), bulkReorder);
+router.post('/:id/reorder', authorize('admin', 'manager'), triggerReorder);
+
+// PUT routes - admin and manager only
+router.put('/:id', authorize('admin', 'manager'), updateMedicine);
+
+// DELETE routes - admin only
+router.delete('/:id', authorize('admin'), deleteMedicine);
 
 module.exports = router;
 

@@ -6,14 +6,16 @@ const {
   getUsageHeatmap,
   getRevenue,
 } = require('../controllers/analytics.controller');
-const { protect } = require('../middleware/auth.middleware');
+const { protect, authorize } = require('../middleware/auth.middleware');
 
+// All routes require authentication
 router.use(protect);
 
-router.get('/top-medicines', getTopMedicines);
-router.get('/demand-forecast', getDemandForecast);
-router.get('/usage-heatmap', getUsageHeatmap);
-router.get('/revenue', getRevenue);
+// Analytics routes - admin and manager only
+router.get('/top-medicines', authorize('admin', 'manager'), getTopMedicines);
+router.get('/demand-forecast', authorize('admin', 'manager'), getDemandForecast);
+router.get('/usage-heatmap', authorize('admin', 'manager'), getUsageHeatmap);
+router.get('/revenue', authorize('admin', 'manager'), getRevenue);
 
 module.exports = router;
 
